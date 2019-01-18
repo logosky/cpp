@@ -1,0 +1,10 @@
+{
+    "ThreadCount": 4,
+    "TotalRedisConfigCount": 1,
+    "RedisConfig0": {
+        "Ip": "127.0.0.1",
+        "Port": 8000,
+        "Passwd": "",
+        "Prefix": ""
+    }
+}

@@ -1,10 +1,10 @@
 {
     "TotalMysqlConfigCount": 1,
     "MysqlConfig0": {
-        "Host": "10.116.22.102",
+        "Host": "",
         "Port": 3306,
         "DbName": "test",
-        "User": "cpp_select",
+        "User": "test",
         "Passwd": "123456",
         "ConnectionPoolSize": 4
     }

@@ -4,6 +4,7 @@
 #include "mysql_config.h"
 #include "utils.h"
 #include "mysql_long_pool.h"
+#include <boost/thread.hpp>
 
 using namespace std;
 
@@ -160,6 +161,23 @@ int exe_sql(PoolType pool_type)
     }
 }
 
+
+void mysql_fun(PoolType pool_type)
+{
+    char thread_name[32] = {0};
+    snprintf(thread_name, 32, "thread_msql:%d", pool_type);
+    pthread_setname_np(pthread_self(), thread_name);
+    while(1)
+    {
+        LOG_PRINTF("pool type:%d", pool_type);
+
+        exe_sql(pool_type);
+        
+        usleep(100000);
+    }
+}
+
+
 int main()
 {
     demo::mysql::MysqlConfigLoad* config_load = new demo::mysql::MysqlConfigLoad(CONFIG_NAME);
@@ -190,14 +208,15 @@ int main()
     db_long_pool->init();
 
     exe_sql(PT_LONG);
-    
-    exe_sql(PT_LONG);
-    
-    exe_sql(PT_LONG);
-
     exe_sql(PT_SHORT);
-
-    exe_sql(PT_SHORT);
+    
+/*
+    boost::thread* thread_a = new boost::thread(boost::bind(&mysql_fun, PT_LONG));
+    boost::thread* thread_b = new boost::thread(boost::bind(&mysql_fun, PT_LONG));
+    boost::thread* thread_c = new boost::thread(boost::bind(&mysql_fun, PT_LONG));
+    boost::thread* thread_d = new boost::thread(boost::bind(&mysql_fun, PT_SHORT));
+*/
+    pthread_setname_np(pthread_self(), "main");
 
     while (!s_quit)
     {

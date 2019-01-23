@@ -4,10 +4,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <sstream>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/lock_guard.hpp>
+#include <signal.h>
+#include <sys/resource.h>
 
 const int MAX_LOG_BUFF_LEN = 2 * 1024;
 const int MAX_INT_BUFF_LEN = 32;
@@ -183,6 +186,8 @@ inline uint64_t SttGetUsTickCount()
 
     return currentTime;
 }
+
+void daemon_init_stdout_open();
 
 #endif
 

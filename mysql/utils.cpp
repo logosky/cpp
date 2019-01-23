@@ -1,5 +1,7 @@
 #include "utils.h"
 #include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -53,4 +55,116 @@ void get_current_readable_time(char * readable_time, int len)
             tm_res.tm_sec,
             ms);
 }
+
+
+void sig_handler(int signum)
+{
+    switch(signum)
+    {
+    case SIGHUP:
+        break;
+    case SIGINT:
+    case SIGPIPE:
+    case SIGALRM:
+    case SIGTERM:
+    case SIGPOLL:
+    case SIGPROF:
+        // 捕获异常退出，调exit(0)会清理资源，目前服务线程模型无法优雅退出，必然会coredump
+        _exit(0);
+        break;
+    case SIGQUIT:
+    case SIGILL:
+    case SIGABRT:
+    case SIGFPE:
+    case SIGSEGV:
+    case SIGBUS:
+    case SIGSYS:
+    case SIGTRAP:
+    case SIGXCPU:
+    case SIGXFSZ:
+        signal(signum, SIG_DFL);
+        kill(getpid(), signum);
+        break;
+    default:
+        break;
+    }
+}
+
+
+void daemon_init_stdout_open()
+{
+    int pid;
+    struct rlimit   rl;                       //获取进程资源西限制
+    if (getrlimit(RLIMIT_NOFILE, &rl) < 0)    //获取进程最多文件数
+    {
+        printf(":can't get file limit");
+    }
+    pid = fork();
+    if (pid)
+    {
+        exit(0);                          //父进程，退出
+    }
+    else if (pid < 0)                         //开辟进程失败，退出并关闭所有进程
+    {
+        exit(1);
+    }
+
+    /* 子进程继续执行 */
+    setsid();                               //创建新的会话组，子进程成为组长，并与控制终端分离
+    /* 防止子进程（组长）获取控制终端 */
+    pid = fork();
+    if (pid)
+    {
+        exit(0);                       //父进程，退出
+    }
+    else if (pid < 0)
+    {
+        exit(1);                        //开辟进程失败，退出并关闭所有进程
+    }
+
+// 不能关闭输入输出
+#if 0
+    /* 第二子进程继续执行 , 第二子进程不再是会会话组组长*/
+    /* 关闭打开的文件描述符*/
+    if (rl.rlim_max == RLIM_INFINITY)     //RLIM_INFINITY是一个无穷量的限制
+    {
+        rl.rlim_max = 1024;
+
+    }
+
+    for (int i = 0; i < (int)rl.rlim_max; i++)
+    {
+        if (i == STDOUT_FILENO || i == STDIN_FILENO)
+        {
+            continue;
+        }
+        close(i);
+
+    }
+#endif // #if 0
+
+    umask(0);       // 重设文件创建掩码
+
+    signal(SIGHUP, sig_handler);
+    signal(SIGINT, sig_handler);
+    signal(SIGPIPE, sig_handler);
+    signal(SIGALRM, sig_handler);
+    signal(SIGTERM, sig_handler);
+    signal(SIGPOLL, sig_handler);
+    signal(SIGPROF, sig_handler);
+    signal(SIGQUIT, sig_handler);
+    signal(SIGILL, sig_handler);
+    signal(SIGABRT, sig_handler);
+    signal(SIGFPE, sig_handler);
+    signal(SIGSEGV, sig_handler);
+    signal(SIGBUS, sig_handler);
+    signal(SIGSYS, sig_handler);
+    signal(SIGTRAP, sig_handler);
+    signal(SIGXCPU, sig_handler);
+    signal(SIGXFSZ, sig_handler);
+    
+    freopen("/dev/null", "w", stdout);
+    freopen("/dev/null", "w", stderr);
+}
+
 

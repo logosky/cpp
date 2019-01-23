@@ -24,6 +24,8 @@ enum PoolType
 
 static void signal_int_handler(int /*sig*/)
 {
+    LOG_PRINTF("get signal");
+    
     s_quit = true;
 }
 
@@ -179,7 +181,13 @@ void mysql_fun(PoolType pool_type)
 
 
 int main()
-{
+{    
+    daemon_init_stdout_open();
+
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGINT, signal_int_handler);
+    signal(SIGTERM, signal_int_handler);
+
     demo::mysql::MysqlConfigLoad* config_load = new demo::mysql::MysqlConfigLoad(CONFIG_NAME);
     if(!config_load->load_config())
     {
@@ -187,6 +195,8 @@ int main()
         return 0;
     }
     
+    demo::mysql::MySQLConnection::MySQL_Init();
+
     const std::vector<demo::mysql::MysqlConfig>& configs = config_load->get_mysql_config();
     const demo::mysql::MysqlConfig& config = configs[0];
     cout<<"config:"<<config.to_string()<<endl;
@@ -222,6 +232,7 @@ int main()
     {
         sleep(1);
     }
+    demo::mysql::MySQLConnection::MySQL_End();
 
     return 0;
 }

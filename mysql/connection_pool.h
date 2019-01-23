@@ -19,7 +19,7 @@ template<typename Connection>
 class ConnectionGuard
 {
 public:
-    //friend class ConnectionPool<Connection>;
+    friend class ConnectionPool<Connection>;
 
     ConnectionGuard(const std::string & tag = "") : _connection(NULL), _pool(NULL)
     {
@@ -78,7 +78,7 @@ public:
         std::swap(_connection, *connection);
     }
 
-//private:
+private:
     void set_connection(Connection * connection, ConnectionPool<Connection> * pool) 
     {
         _connection = connection;

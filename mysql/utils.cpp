@@ -94,7 +94,7 @@ void sig_handler(int signum)
 void daemon_init_stdout_open()
 {
     int pid;
-    struct rlimit   rl;                       //获取进程资源西限制
+    struct rlimit   rl;                       //获取进程资源限制
     if (getrlimit(RLIMIT_NOFILE, &rl) < 0)    //获取进程最多文件数
     {
         printf(":can't get file limit");

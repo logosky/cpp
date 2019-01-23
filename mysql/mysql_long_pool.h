@@ -31,6 +31,8 @@ public:
 
     void ping_for_pool();
     
+    void ping_for_pool_impl();
+
 private:
 
     int _pool_size;

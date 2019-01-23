@@ -39,6 +39,7 @@ public:
 
     virtual Bool Open();
     virtual Bool Close();
+    virtual Int Ping();
 
     //返回0代表成功，非0代表失败
     virtual long BeginTrans();

@@ -194,7 +194,7 @@ public:
         pthread_mutex_unlock(&_mutex);
     }
 
-private:
+protected:
     volatile bool _init_done;
     std::queue<Connection *> _connections;
     pthread_mutex_t _mutex;

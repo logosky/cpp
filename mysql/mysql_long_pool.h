@@ -29,6 +29,8 @@ public:
 
     bool get_connection(ConnectionGuard<MySQLConnection> * connection, int timeout_ms = 0);
 
+    void ping_for_pool();
+    
 private:
 
     int _pool_size;
@@ -38,7 +40,9 @@ private:
     char* m_User;
     char* m_Pwd;
 
-    bool _init_done;
+    volatile bool _init_done;
+
+    boost::thread* _ping_thread;
 };
 
 }

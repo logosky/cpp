@@ -108,6 +108,11 @@ Bool MySQLConnection::Close()
     return TRUE;
 }
 
+Int MySQLConnection::Ping()
+{
+    return mysql_ping(&m_conn);
+}
+
 long MySQLConnection::BeginTrans()
 {
     const char * _sql = "START TRANSACTION";

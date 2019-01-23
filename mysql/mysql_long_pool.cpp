@@ -16,10 +16,16 @@ MysqlLongPool::MysqlLongPool(char* strPath, char* strUser, char* strPwd, int Poo
     m_Path = strdup(strPath);
     m_User = strdup(strUser);
     m_Pwd = strdup(strPwd);
+
+    _ping_thread = new boost::thread(boost::bind(&MysqlLongPool::ping_for_pool, this));
 }
 
 MysqlLongPool::~MysqlLongPool(void)
 {
+    _ping_thread->interrupt();
+    _ping_thread->join();
+    delete _ping_thread;
+    
     for (int i = 0; i < _pool_size; i++)
     {
         ConnectionGuard< MySQLConnection > connection;
@@ -105,6 +111,51 @@ bool MysqlLongPool::get_connection(ConnectionGuard<MySQLConnection> * connection
     }
 
     return ConnectionPool<MySQLConnection>::get_connection(connection, timeout_ms);
+}
+
+void MysqlLongPool::ping_for_pool()
+{
+    pthread_setname_np(pthread_self(), "MYSQL_PING_THREAD");
+
+    sleep(60);
+    
+    if(!_init_done)
+    {
+        return;
+    }
+    
+    pthread_mutex_lock(&_mutex);
+    if (_connections.empty())
+    {
+        pthread_mutex_unlock(&_mutex);
+        
+        LOG_PRINTF("pool is empty now, not need ping.");
+
+        return;
+    }
+
+    std::vector<MySQLConnection*> temp_pool;
+
+    while(!_connections.empty())
+    {
+        MySQLConnection* conn = _connections.front();
+        _connections.pop();
+
+        int ret = conn->Ping();
+        if(ret != 0)
+        {
+            LOG_PRINTF("ping err:%d.", ret);
+        }
+        
+        temp_pool.push_back(conn);
+    }
+
+    for(int i = 0; i < temp_pool.size();i++)
+    {
+        MySQLConnection* temp_conn = temp_pool[i];
+        give_back(temp_conn);
+    }
+    pthread_mutex_unlock(&_mutex);
 }
 
 }

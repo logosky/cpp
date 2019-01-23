@@ -77,7 +77,6 @@ Bool MySQLConnection::Open()
 
     if (mysql_init(&m_conn) == NULL)
     {
-        //OUTLOG_F((xc, "init error %d.message:%s", mysql_errno(&m_conn),mysql_error(&m_conn)));
         LOG_PRINTF("init error %d.message:%s", mysql_errno(&m_conn), mysql_error(&m_conn));
         return FALSE;
     }

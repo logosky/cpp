@@ -10,7 +10,7 @@ namespace mysql
 //  由于m_PoolSize m_DBType未使用，从SttDBPool类中删除掉，但这里的参数需要保留
 MysqlPool::MysqlPool(DBType dbt, char* strPath, char* strUser, char* strPwd, int PoolSize)
     :  m_TotalCount(0)
-{            
+{
     m_Path = strdup(strPath);
     m_User = strdup(strUser);
     m_Pwd = strdup(strPwd);
@@ -120,7 +120,7 @@ IConnection *MysqlPool::GetConnUseful(unsigned int read_timeout)
     conn->SetPass(m_User, m_Pwd);
     conn->SetReadTimeout(read_timeout);
 
-    if(!conn->Open())            
+    if(!conn->Open())
     {
         CloseConn(conn);
         conn = NULL;
@@ -140,7 +140,7 @@ void MysqlPool::CloseConn(IConnection * pConn)
     {
         pConn->Close();
         delete pConn;
-    }            
+    }
     mysql_thread_end();
     //boost::lock_guard<boost::mutex> gate(m_Mutex);
 

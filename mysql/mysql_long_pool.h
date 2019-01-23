@@ -21,7 +21,7 @@ namespace mysql
 class MysqlLongPool : public ConnectionPool<MySQLConnection>
 {
 public:
-    MysqlLongPool(char* strPath, char* strUser, char* strPwd, int PoolSize);
+    MysqlLongPool(char* strPath, char* strUser, char* strPwd, int PoolSize, unsigned int read_timeout = 0);
     
     virtual ~MysqlLongPool(void);
 
@@ -32,6 +32,7 @@ public:
 private:
 
     int _pool_size;
+    unsigned int _read_timeout;
     
     char* m_Path;
     char* m_User;

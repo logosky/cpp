@@ -7,9 +7,10 @@ namespace demo
 namespace mysql
 {
 
-MysqlLongPool::MysqlLongPool(char* strPath, char* strUser, char* strPwd, int PoolSize)
+MysqlLongPool::MysqlLongPool(char* strPath, char* strUser, char* strPwd, int PoolSize, unsigned int read_timeout)
     : ConnectionPool<MySQLConnection>(), 
     _pool_size(PoolSize),
+    _read_timeout(read_timeout),
     _init_done(false)
 {
     m_Path = strdup(strPath);
@@ -59,6 +60,11 @@ bool MysqlLongPool::init()
         
         connection->SetAccessUrl(m_Path);
         connection->SetPass(m_User, m_Pwd);
+
+        if(_read_timeout > 0)
+        {
+            connection->SetReadTimeout(_read_timeout);
+        }
         
         if (!connection->Open())
         {

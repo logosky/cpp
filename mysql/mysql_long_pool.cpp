@@ -115,7 +115,7 @@ bool MysqlLongPool::get_connection(ConnectionGuard<MySQLConnection> * connection
 
 void MysqlLongPool::ping_for_pool()
 {
-    pthread_setname_np(pthread_self(), "MYSQL_PING_THREAD");
+    pthread_setname_np(pthread_self(), "mysql_ping");
     
     while(1)
     {

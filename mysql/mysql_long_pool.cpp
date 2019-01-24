@@ -144,6 +144,8 @@ void MysqlLongPool::ping_for_pool_impl()
         return;
     }
 
+    uint64_t begin = get_us_tick_count();
+
     std::vector<MySQLConnection*> temp_pool;
 
     while(!_connections.empty())
@@ -163,8 +165,14 @@ void MysqlLongPool::ping_for_pool_impl()
     for(int i = 0; i < temp_pool.size();i++)
     {
         MySQLConnection* temp_conn = temp_pool[i];
-        give_back(temp_conn);
+        _connections.push(temp_conn);
+        LOG_PRINTF("give back connection:%x, size:%d\n", temp_conn, _connections.size());
+        pthread_cond_signal(&_cond);
     }
+
+    uint64_t end = get_us_tick_count();
+    LOG_PRINTF("ping use time:%llu\n", (end - begin));
+
     pthread_mutex_unlock(&_mutex);
 }
 

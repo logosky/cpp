@@ -122,7 +122,7 @@ inline uint64_t get_cur_time_us()
     return cur_time_us;
 }
 
-inline uint64_t SttGetTickCount()
+inline uint64_t get_tick_count()
 {
     //volatile static uint64_t lastTick = 0;
     uint64_t currentTime;
@@ -155,7 +155,7 @@ inline uint64_t SttGetTickCount()
 }
 
 
-inline uint64_t SttGetUsTickCount()
+inline uint64_t get_us_tick_count()
 {
     uint64_t currentTime;
 

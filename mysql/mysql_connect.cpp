@@ -353,7 +353,7 @@ Bool MySQLCommand::PrepareCommand(const char* CmdTxt)
 Int MySQLCommand::ExecuteNoQuery()
 {
     ++exec_cmd_count;
-    uint64_t tickStart = SttGetTickCount();
+    uint64_t tickStart = get_tick_count();
     // 发起mysql调用
     
     my_bool ret = mysql_stmt_bind_param(m_Statement, m_Params);
@@ -373,7 +373,7 @@ Int MySQLCommand::ExecuteNoQuery()
         return -1;
     }
 
-    uint64_t tickEscape = SttGetTickCount() - tickStart;
+    uint64_t tickEscape = get_tick_count() - tickStart;
 
     if (tickEscape > 500 && m_Cmd)
     {
@@ -391,7 +391,7 @@ Int MySQLCommand::ExecuteNoQuery()
 IRecordset * MySQLCommand::ExecuteQuery(IRecordset & rs)
 {
     ++exec_cmd_count;
-    uint64_t tickStart = SttGetTickCount();
+    uint64_t tickStart = get_tick_count();
     
     // 发起mysql调用
 
@@ -419,7 +419,7 @@ IRecordset * MySQLCommand::ExecuteQuery(IRecordset & rs)
         nRet = 1;
     }
 
-    uint64_t tickEscape = SttGetTickCount() - tickStart;
+    uint64_t tickEscape = get_tick_count() - tickStart;
 
     if (tickEscape > 500 && m_Cmd)
     {
@@ -437,7 +437,7 @@ IRecordset * MySQLCommand::ExecuteQuery(IRecordset & rs)
 IRecordset * MySQLCommand::ExecuteQueryNoSTMT(const char* CmdTxt, IRecordset & rs)
 {
     ++exec_cmd_count;
-    uint64_t tickStart = SttGetTickCount();
+    uint64_t tickStart = get_tick_count();
     // 发起mysql调用
     int nRet = mysql_real_query(&m_Connection->m_conn, CmdTxt, strlen(CmdTxt));
 
@@ -457,7 +457,7 @@ IRecordset * MySQLCommand::ExecuteQueryNoSTMT(const char* CmdTxt, IRecordset & r
         nRet = 1;
     }
 
-    uint64_t tickEscape = SttGetTickCount() - tickStart;
+    uint64_t tickEscape = get_tick_count() - tickStart;
 
     if (tickEscape > 500 && m_Cmd)
     {
@@ -475,7 +475,7 @@ IRecordset * MySQLCommand::ExecuteQueryNoSTMT(const char* CmdTxt, IRecordset & r
 Int MySQLCommand::ExecuteNoQuery(const char* CmdTxt)
 {
     ++exec_cmd_count;
-    uint64_t tickStart = SttGetTickCount();
+    uint64_t tickStart = get_tick_count();
     // 发起mysql调用
 
     int nRet = mysql_real_query(&m_Connection->m_conn, CmdTxt, strlen(CmdTxt));
@@ -488,7 +488,7 @@ Int MySQLCommand::ExecuteNoQuery(const char* CmdTxt)
         return -1;
     }
 
-    uint64_t tickEscape = SttGetTickCount() - tickStart;
+    uint64_t tickEscape = get_tick_count() - tickStart;
 
     if (tickEscape > 500 && CmdTxt)
     {

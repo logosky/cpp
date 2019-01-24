@@ -217,15 +217,16 @@ int main()
 
     db_long_pool->init();
 
-    exe_sql(PT_LONG);
-    exe_sql(PT_SHORT);
+    //exe_sql(PT_LONG);
+    //exe_sql(PT_SHORT);
     
-/*
+#if 1
     boost::thread* thread_a = new boost::thread(boost::bind(&mysql_fun, PT_LONG));
     boost::thread* thread_b = new boost::thread(boost::bind(&mysql_fun, PT_LONG));
     boost::thread* thread_c = new boost::thread(boost::bind(&mysql_fun, PT_LONG));
-    boost::thread* thread_d = new boost::thread(boost::bind(&mysql_fun, PT_SHORT));
-*/
+    //boost::thread* thread_d = new boost::thread(boost::bind(&mysql_fun, PT_SHORT));
+#endif
+
     pthread_setname_np(pthread_self(), "main");
 
     while (!s_quit)

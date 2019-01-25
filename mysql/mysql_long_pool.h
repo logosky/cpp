@@ -21,12 +21,14 @@ namespace mysql
 class MysqlLongPool : public ConnectionPool<MySQLConnection>
 {
 public:
-    MysqlLongPool(char* strPath, char* strUser, char* strPwd, int PoolSize, unsigned int read_timeout = 0);
+    // read_timeout:数据库操作最长等待时长，单位s
+    MysqlLongPool(std::string strPath, std::string strUser, std::string strPwd, int PoolSize, unsigned int read_timeout = 0);
     
     virtual ~MysqlLongPool(void);
 
     bool init();
 
+    // timeout_ms:从连接池获取连接的最长等候时长，单位ms
     bool get_connection(ConnectionGuard<MySQLConnection> * connection, int timeout_ms = 0);
 
     void ping_for_pool();
@@ -36,11 +38,11 @@ public:
 private:
 
     int _pool_size;
-    unsigned int _read_timeout;
+    unsigned int _read_timeout;  // 数据库操作最长等待时长，单位s
     
-    char* m_Path;
-    char* m_User;
-    char* m_Pwd;
+    std::string m_Path;
+    std::string m_User;
+    std::string m_Pwd;
 
     volatile bool _init_done;
 

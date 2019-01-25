@@ -210,9 +210,9 @@ int main()
     const_cast<char*>(config._mysql_passwd.c_str()),
     config._mysql_connection_pool_size);
     
-    db_long_pool = new demo::mysql::MysqlLongPool(const_cast<char*>(ss.str().c_str()),
-        const_cast<char*>(config._mysql_user.c_str()),
-        const_cast<char*>(config._mysql_passwd.c_str()),
+    db_long_pool = new demo::mysql::MysqlLongPool(ss.str().c_str(),
+        config._mysql_user,
+        config._mysql_passwd,
         config._mysql_connection_pool_size);
 
     db_long_pool->init();

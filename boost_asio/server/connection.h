@@ -30,6 +30,11 @@ public:
     int recv();
 
     int recv_data(const char * data, const boost::system::error_code & error, const size_t bytes_transferred);
+
+    int send_data(const char* data, int len);
+
+    int on_sended(const char* data, const boost::system::error_code & error,
+                       int bytes_transferred);
     
     boost::asio::ip::tcp::socket& get_socket(void)
     {

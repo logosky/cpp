@@ -41,13 +41,44 @@ int Connection::recv()
 
 int Connection::recv_data(const char * data, const boost::system::error_code & error, const size_t bytes_transferred)
 {
-    char temp_buf[128] = {0};
+    char* temp_buf = new char[128];
 
+    memset(temp_buf, 0, 128);
     memcpy(temp_buf, data, bytes_transferred);
     
     LOG_PRINTF("recv len:%d, %s", bytes_transferred, temp_buf);
 
+    send_data(temp_buf, strlen(temp_buf));
+
     recv();
+}
+
+int Connection::send_data(const char* data, int len)
+{
+    if (_connect_status != CS_Connected)
+    {
+        LOG_PRINTF("not connected:%d, send len:%d, %s", _connect_status, len, data);
+        return -1;
+    }
+
+    async_write(*_socket, boost::asio::buffer(data, len),
+                boost::bind(&Connection::on_sended, this, data, _1, _2));
+
+    return 0;
+}
+
+int Connection::on_sended(const char* data, const boost::system::error_code & error,
+                                   int bytes_transferred)
+{
+    LOG_PRINTF("send ret:%d msg:%s .data len:%d, %s", 
+        error.value(), 
+        error.message().c_str(), 
+        bytes_transferred, 
+        data);
+
+    delete[] data;
+
+    return 0;
 }
 
 }

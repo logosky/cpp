@@ -14,10 +14,11 @@
 
 const int MAX_LOG_BUFF_LEN = 2 * 1024;
 const int MAX_INT_BUFF_LEN = 32;
+const int MAX_LOG_BUF_LEN = 512;
 
 #define LOG_PRINTF(fmt, ...) do{ \
-    char buf[128] = {0}; \
-    snprintf(buf, 128, "[%s - %s - %d]", __FILE__, __FUNCTION__, __LINE__); \
+    char buf[MAX_LOG_BUF_LEN] = {0}; \
+    snprintf(buf, MAX_LOG_BUF_LEN, "[%s - %s - %d]", __FILE__, __FUNCTION__, __LINE__); \
     log_printf(buf, fmt, ##__VA_ARGS__); \
 }while(0)
 

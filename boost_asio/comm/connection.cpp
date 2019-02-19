@@ -110,14 +110,15 @@ int Connection::recv_data(const char * data, const boost::system::error_code & e
         return error.value();
     }
     
-    char* temp_buf = new char[128];
+    char* temp_buf = new char[512];
 
-    memset(temp_buf, 0, 128);
+    memset(temp_buf, 0, 512);
     memcpy(temp_buf, data, bytes_transferred);
     
     LOG_PRINTF("recv len:%d, %s", bytes_transferred, temp_buf);
 
-    send_data(temp_buf, strlen(temp_buf));
+    delete temp_buf;
+    //send_data(temp_buf, strlen(temp_buf));
 
     recv();
 }
@@ -145,7 +146,7 @@ int Connection::on_sended(const char* data, const boost::system::error_code & er
         bytes_transferred, 
         data);
 
-    delete[] data;
+    //delete[] data;
     
     if(error)
     {

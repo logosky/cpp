@@ -26,9 +26,17 @@ int main(int argc, char** argv)
     client->init();
     client->start();
 
+    int sequence = 1;
+    char buff[128] = {0};
     while(1)
     {
-        sleep(1);
+        snprintf(buff, sizeof(buff), "send to server:%d", sequence);
+
+        sequence++;
+
+        client->send_data(buff, strlen(buff));
+        
+        sleep(3);
     }
     
     return 0;

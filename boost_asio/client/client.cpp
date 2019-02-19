@@ -61,5 +61,10 @@ int Client::thread_run()
     _io->run();
 }
 
+int Client::send_data(const char* data, int len)
+{
+    _connection->send_data(data, len);
+}
+
 }
 

@@ -25,6 +25,7 @@ public:
     
     int thread_run();
 
+    int send_data(const char* data, int len);
 private:
     string _ip;
     int _port;

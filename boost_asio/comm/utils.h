@@ -32,7 +32,7 @@ struct TcpDataBase
     unsigned long opaque_id;
     unsigned long data_size;
 };
-#pragma unpack
+#pragma pack(pop)
 
 enum TcpDataType
 {

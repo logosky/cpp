@@ -117,6 +117,24 @@ int Connection::recv_data(const char * data, const boost::system::error_code & e
     
     LOG_PRINTF("recv len:%d, %s", bytes_transferred, temp_buf);
 
+    // decode data
+    TcpDataBase* base = (TcpDataBase*)temp_buf;
+    LOG_PRINTF("recv base ver:%d magic:%x code:%lld opaque:%lld size:%lld", 
+        base->ver,
+        base->magic,
+        base->code,
+        base->opaque_id,
+        base->data_size);
+    char* ptr = temp_buf + sizeof(TcpDataBase);
+    int* t = (int *)ptr;
+    ptr += 4;
+
+    int* l = (int *)ptr;
+    ptr += 4;
+    LOG_PRINTF("t:%d l:%d v:%s", 
+        *t, *l ,ptr);
+        
+
     delete temp_buf;
     //send_data(temp_buf, strlen(temp_buf));
 

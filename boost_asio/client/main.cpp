@@ -28,15 +28,35 @@ int main(int argc, char** argv)
 
     int sequence = 1;
     char buff[128] = {0};
+    TcpDataBase base;
+    base.ver = 1;
+    base.magic = 0xAABBCCDD;
+    base.code = 1;
+    base.opaque_id = 123456;
+    base.data_size = 4 + 4 + 5;
+
+    memcpy(buff, &base, sizeof(buff));
+    char* buf_ptr = buff + sizeof(base);
+    int* t = (int *)buf_ptr;
+    *t = TDT_A;
+    buf_ptr += 4;
+    
+    int* l = (int *)buf_ptr;
+    *l = 5;
+    buf_ptr += 4;
+    snprintf(buf_ptr, sizeof(buff), "hello");
+    
     while(1)
     {
-        snprintf(buff, sizeof(buff), "send to server:%d", sequence);
+        // snprintf(buff, sizeof(buff), "send to server:%d", sequence);
 
-        sequence++;
+        // sequence++;
 
-        client->send_data(buff, strlen(buff));
+        int len = sizeof(base) + 4 + 4 + 5;
+        client->send_data(buff, len);
         
         sleep(3);
+        break;
     }
     
     return 0;

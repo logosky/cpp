@@ -22,6 +22,27 @@ const int MAX_LOG_BUF_LEN = 512;
     log_printf(buf, fmt, ##__VA_ARGS__); \
 }while(0)
 
+
+#pragma pack(push, 1)
+struct TcpDataBase
+{
+    unsigned int ver;
+    unsigned int magic;
+    unsigned long code;
+    unsigned long opaque_id;
+    unsigned long data_size;
+};
+#pragma unpack
+
+enum TcpDataType
+{
+    TDT_MIN = 0,
+    TDT_A = 1,
+    TDT_B = 2,
+    TDT_C = 3,
+    TDT_MAX = 4,
+};
+
 class Read_Write_Lock
 {
 public:

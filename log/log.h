@@ -1,6 +1,5 @@
 #include<stdio.h>
-namespace temp
-{
+
 extern void log_fun(const char *file , int line , const char *func, const char* fmt, ...);
 
 #define FLOW_LOG(fmt, args...) do{ \
@@ -22,4 +21,4 @@ extern void log_fun(const char *file , int line , const char *func, const char* 
 #define NOTICE_LOG(fmt, args...)  do{ \
  log_fun(__FILE__ , __LINE__ , __FUNCTION__, fmt, ##args);\
 }while(0);
-}
+

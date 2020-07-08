@@ -27,7 +27,7 @@ public:
 
     ~Connection();
 
-    bool connect(const std::string & ip, const int port);
+    bool connect(const std::string & ip, const int port, bool ipv6 = false);
     
     int recv();
 

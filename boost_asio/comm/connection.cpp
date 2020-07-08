@@ -32,12 +32,20 @@ Connection::~Connection()
     delete[] _receive_buf;
 }
 
-bool Connection::connect(const std::string & ip, const int port)
+bool Connection::connect(const std::string & ip, const int port, bool ipv6)
 {
     _connect_status = CS_Connecting;
 
     boost::system::error_code ec;
-    _socket->open(boost::asio::ip::tcp::v4(), ec);
+    if(ipv6)
+    {
+        _socket->open(boost::asio::ip::tcp::v6(), ec);
+    }
+    else
+    {
+        _socket->open(boost::asio::ip::tcp::v4(), ec);
+    }
+
     if (ec)
     {
         LOG_PRINTF("connect %s:%d m_Socket->open %d, %s", 
@@ -50,7 +58,14 @@ bool Connection::connect(const std::string & ip, const int port)
         return false;
     }
 
-    _socket->bind(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0), ec);
+    if(ipv6)
+    {
+        _socket->bind(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), 0), ec);
+    }
+    else
+    {
+        _socket->bind(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0), ec);
+    }
     if (ec)
     {
         LOG_PRINTF("connect %s:%d bind %d, %s", 

@@ -8,7 +8,7 @@
 #include "client.h"
 
 using namespace std;
-using namespace Tcp;
+using namespace Demo;
 
 int main(int argc, char** argv)
 {
@@ -19,11 +19,15 @@ int main(int argc, char** argv)
     }
     string ip = argv[1];
     int port = atoi(argv[2]);
-
-    LOG_PRINTF("connect to %s:%d", ip.c_str(), port);
+    int ipv6 = false;
+    if(argc > 3)
+    {
+        ipv6 = atoi(argv[3]);
+    }
+    LOG_PRINTF("[ipv6:%d] connect to %s:%d", ipv6, ip.c_str(), port);
 
     Client* client = new Client(ip, port);
-    client->init();
+    client->init(ipv6);
     client->start();
 
     int sequence = 1;

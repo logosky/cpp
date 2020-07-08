@@ -11,7 +11,7 @@ using namespace std;
 
 #define RECV_BUFFER_SIZE    8196
 
-namespace Tcp
+namespace Demo
 {
 enum ConnectStatus
 {

@@ -11,24 +11,27 @@ using namespace std;
 
 #define SAFE_DELETE(p) do{if(p){delete p; p = NULL;}}while(0);
 
-namespace Tcp
+namespace Demo
 {
 
-Server::Server(const string& _ip, int _port):
-    _ip(_ip), _port(_port)
+Server::Server(const string& ip, int port, const string& ip_v6):
+    _ip(ip), _port(port), _ip_v6(ip_v6)
 {
     _io = new boost::asio::io_service();
     _acceptor = new boost::asio::ip::tcp::acceptor(*_io);
+    _acceptor_v6 = new boost::asio::ip::tcp::acceptor(*_io);
 }
 
 Server::~Server()
 {
     SAFE_DELETE(_io);
     SAFE_DELETE(_acceptor);
+    SAFE_DELETE(_acceptor_v6);
 }
 
 int Server::init()
 {
+    LOG_PRINTF("ip:%s port:%d ip_v6:%s", _ip.c_str(), _port, _ip_v6.c_str());
     try
     {
         boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(_ip), _port);
@@ -36,6 +39,13 @@ int Server::init()
         _acceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
         _acceptor->bind(endpoint);
         _acceptor->listen();
+
+        boost::asio::ip::tcp::endpoint endpoint_v6(boost::asio::ip::address::from_string(_ip_v6), _port);
+        _acceptor_v6->open(endpoint_v6.protocol());
+        _acceptor_v6->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+        _acceptor_v6->set_option(boost::asio::ip::v6_only(true));
+        _acceptor_v6->bind(endpoint_v6);
+        _acceptor_v6->listen();
     }
     catch (const boost::system::system_error & e)
     {
@@ -61,6 +71,10 @@ void Server::post_new_accept()
     boost::asio::ip::tcp::socket * socket = new boost::asio::ip::tcp::socket(*_io);
     boost::shared_ptr<Connection> connection(new Connection(socket));
     _acceptor->async_accept(*socket, boost::bind(&Server::on_accept, this, connection, boost::asio::placeholders::error));
+
+    boost::asio::ip::tcp::socket * socket_v6 = new boost::asio::ip::tcp::socket(*_io);
+    boost::shared_ptr<Connection> connection_v6(new Connection(socket_v6));
+    _acceptor_v6->async_accept(*socket_v6, boost::bind(&Server::on_accept, this, connection_v6, boost::asio::placeholders::error));
 }
 
 void Server::on_accept(boost::shared_ptr<Connection> connection, const boost::system::error_code& error)
@@ -81,11 +95,18 @@ void Server::on_accept(boost::shared_ptr<Connection> connection, const boost::sy
             break;
         }
 
-        connection->_client_ip = endpoint.address().to_v4().to_ulong();
+        if(endpoint.address().is_v4())
+        {
+            connection->_client_ip = endpoint.address().to_v4().to_string();
+        }
+        else
+        {
+            connection->_client_ip = endpoint.address().to_v6().to_string();
+        }
         connection->_client_port = endpoint.port();
         connection->_connect_status = CS_Connected;
 
-        LOG_PRINTF("new connection, %s:%d", endpoint.address().to_v4().to_string().c_str(), endpoint.port());
+        LOG_PRINTF("new connection, %s:%d", connection->_client_ip.c_str(), endpoint.port());
 
         connection->get_socket().set_option(boost::asio::socket_base::keep_alive(true));
         connection->get_socket().set_option(boost::asio::socket_base::linger(false, 5));

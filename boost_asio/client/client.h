@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace Tcp
+namespace Demo
 {
 class Client
 {
@@ -19,7 +19,7 @@ public:
 
     ~Client();
 
-    int init();
+    int init(bool ipv6 = false);
     
     int start();
     

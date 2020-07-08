@@ -11,7 +11,7 @@ using namespace std;
 
 #define SAFE_DELETE(p) do{if(p){delete p; p = NULL;}}while(0);
 
-namespace Tcp
+namespace Demo
 {
 
 Client::Client(const string& _ip, int _port):
@@ -25,13 +25,13 @@ Client::~Client()
     SAFE_DELETE(_io);
 }
 
-int Client::init()
+int Client::init(bool ipv6)
 {
     try
     {
         boost::asio::ip::tcp::socket * socket = new boost::asio::ip::tcp::socket(*_io);
         _connection.reset(new Connection(socket));
-        if (_connection->connect(_ip, _port))
+        if (_connection->connect(_ip, _port, ipv6))
         {
             _connection->recv();
 

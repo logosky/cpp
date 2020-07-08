@@ -10,12 +10,12 @@
 
 using namespace std;
 
-namespace Tcp
+namespace Demo
 {
 class Server
 {
 public:
-    Server(const string& ip, int port);
+    Server(const string& ip, int port, const string& ip_v6);
 
     ~Server();
 
@@ -31,10 +31,12 @@ public:
 
 private:
     string _ip;
+    string _ip_v6;
     int _port;
     
     boost::asio::io_service* _io;
     boost::asio::ip::tcp::acceptor* _acceptor;
+    boost::asio::ip::tcp::acceptor* _acceptor_v6;
     
     boost::thread * _thread;
 

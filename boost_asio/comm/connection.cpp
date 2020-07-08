@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace Tcp
+namespace Demo
 {
 
 Connection::Connection(boost::asio::ip::tcp::socket * socket)
@@ -45,7 +45,6 @@ bool Connection::connect(const std::string & ip, const int port, bool ipv6)
     {
         _socket->open(boost::asio::ip::tcp::v4(), ec);
     }
-
     if (ec)
     {
         LOG_PRINTF("connect %s:%d m_Socket->open %d, %s", 

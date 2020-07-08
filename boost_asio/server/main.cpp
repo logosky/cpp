@@ -8,7 +8,7 @@
 #include "server.h"
 
 using namespace std;
-using namespace Tcp;
+using namespace Demo;
 
 int main(int argc, char** argv)
 {
@@ -19,10 +19,11 @@ int main(int argc, char** argv)
     }
     string ip = argv[1];
     int port = atoi(argv[2]);
+    string ip_v6 = argv[3];
 
-    LOG_PRINTF("server %s:%d", ip.c_str(), port);
+    LOG_PRINTF("server %s:%d ip_v6:%s", ip.c_str(), port, ip_v6.c_str());
 
-    Server* server = new Server(ip, port);
+    Server* server = new Server(ip, port, ip_v6);
     server->init();
     server->start();
 
